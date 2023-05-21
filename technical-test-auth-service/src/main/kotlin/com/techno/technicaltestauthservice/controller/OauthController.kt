@@ -4,6 +4,7 @@ import com.techno.technicaltestauthservice.dto.request.ReqAuthDto
 import com.techno.technicaltestauthservice.dto.response.BaseResponseDto
 import com.techno.technicaltestauthservice.dto.response.ErrorDescriptionDto
 import com.techno.technicaltestauthservice.repository.GrantTypeRepository
+import com.techno.technicaltestauthservice.repository.UserRepository
 import com.techno.technicaltestauthservice.service.AuthService
 import com.techno.technicaltestauthservice.util.JWTGenerator
 import org.slf4j.LoggerFactory
@@ -17,7 +18,8 @@ import javax.servlet.http.HttpServletRequest
 @RequestMapping("/apiservice/oauth")
 class OauthController(
     val authService: AuthService,
-    val grantTypeRepository: GrantTypeRepository
+    val grantTypeRepository: GrantTypeRepository,
+    val userRepository: UserRepository
 ) {
     val log = LoggerFactory.getLogger(this::class.java)
     @PostMapping("/token")
@@ -52,7 +54,7 @@ class OauthController(
 
     @GetMapping("test")
     fun testToken(@RequestParam("token") token: String): String{
-        val isExpired = JWTGenerator().isExpired(token)
+        val isExpired = JWTGenerator(userRepository).isExpired(token)
 
         return isExpired.toString()
     }

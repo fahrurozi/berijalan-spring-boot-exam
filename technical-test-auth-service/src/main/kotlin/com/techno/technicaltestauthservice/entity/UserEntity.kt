@@ -12,5 +12,7 @@ data class UserEntity(
     @Column(unique = true)
     val username: String? = "",
 
-    val password: String? = ""
+    val password: String? = "",
+
+    var token: String? = ""
 )

@@ -16,11 +16,13 @@ class AuthServiceImpl(
 ): AuthService {
     override fun getToken(request: ReqAuthDto, username: String): ResAuthDto {
         val user = userRepository.findUsername(username)
-        val jwt = JWTGenerator().createJWT(user?.id!!,username)
+
+        val jwt = JWTGenerator(userRepository).createJWT(user?.id!!,username)
+
         return ResAuthDto(
             access_token = jwt[0],
             token_type = "Bearer",
-            expires_in = jwt[1].toInt(),
+            expires_in = jwt[1]?.toInt(),
             scope = "resource.WRITE openid resource.READ"
         )
     }

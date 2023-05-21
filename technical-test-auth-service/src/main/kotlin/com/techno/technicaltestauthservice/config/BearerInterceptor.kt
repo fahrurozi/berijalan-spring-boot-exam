@@ -3,6 +3,7 @@ package com.techno.technicaltestauthservice.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.techno.technicaltestauthservice.dto.response.BaseResponseDto
 import com.techno.technicaltestauthservice.dto.response.ErrorDescriptionDto
+import com.techno.technicaltestauthservice.repository.UserRepository
 import com.techno.technicaltestauthservice.util.JWTGenerator
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.HandlerInterceptor
@@ -12,13 +13,13 @@ import javax.servlet.http.HttpServletResponse
 
 @Component
 class BearerInterceptor(
-
+val userRepository: UserRepository
 ): HandlerInterceptor {
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         val authorizationHeader = request.getHeader("Authorization")
         val token = authorizationHeader?.substringAfter("Bearer ")
 
-        val isExpired = JWTGenerator().isExpired(token.toString())
+        val isExpired = JWTGenerator(userRepository).isExpired(token.toString())
         if(token == null || isExpired){
             val json = ObjectMapper().writeValueAsString(
                 mapOf(
